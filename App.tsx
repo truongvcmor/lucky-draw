@@ -549,7 +549,7 @@ const App: React.FC = () => {
                                     1. Đối tượng tham gia
                                 </h3>
                                 <div className="bg-white/5 p-4 rounded-lg border border-white/5 text-sm leading-relaxed">
-                                    <p>Toàn bộ nhân viên chính thức (Staff) và khách mời (Guest) có tên trong danh sách tham dự sự kiện <strong>Year End Party 2026</strong> của MOR Software HCM.</p>
+                                    <p>Toàn bộ nhân viên chính thức (Staff) và khách mời (Guest) có tên trong danh sách tham dự sự kiện <strong>Year End Party 2025</strong> của MOR Software HCM.</p>
                                 </div>
                             </section>
 
