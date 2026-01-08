@@ -8,6 +8,7 @@ import ControlBar from './components/ControlBar';
 import { Participant, Prize, UserType, WheelSegment, WinRecord } from './types';
 import { audioManager } from './utils/audio';
 import { drawFireworks } from './utils/fireworks';
+import SlidePanel from './components/SlidePanel';
 
 // Default Data Seed
 const SEED_PARTICIPANTS: Participant[] = Array.from({ length: 60 }, (_, i) => ({
@@ -42,7 +43,7 @@ const WHEEL_COLORS = [
   { bg: '#ed5836', text: '#FFFFFF' },
 ];
 
-type ViewState = 'HOME' | 'GAME' | 'RECAP' | 'TIMELINE';
+type ViewState = 'HOME' | 'GAME' | 'RECAP' | 'SLIDE';
 
 interface HistoryState {
   winners: number[];
@@ -707,30 +708,11 @@ const App: React.FC = () => {
         </div>
       )}
       
-      {currentView === 'TIMELINE' && (
-        <div className="flex-grow flex items-center justify-center relative z-10">
-             <div className="text-center animate-fade-in-up">
-                <h2 className="text-4xl font-bold mb-4">Timeline Chương Trình</h2>
-                <div className="space-y-4 text-left max-w-md mx-auto bg-black/40 p-8 rounded-xl border border-white/10">
-                    <div className="flex gap-4 border-b border-white/10 pb-2">
-                        <span className="text-mor-gold font-bold">18:00</span>
-                        <span>Đón khách & Check-in</span>
-                    </div>
-                    <div className="flex gap-4 border-b border-white/10 pb-2">
-                        <span className="text-mor-gold font-bold">18:30</span>
-                        <span>Khai mạc & Speech</span>
-                    </div>
-                    <div className="flex gap-4 border-b border-white/10 pb-2">
-                        <span className="text-mor-gold font-bold">19:00</span>
-                        <span>Nhập tiệc & Minigame</span>
-                    </div>
-                    <div className="flex gap-4 border-b border-white/10 pb-2">
-                        <span className="text-mor-gold font-bold">20:30</span>
-                        <span>Lucky Draw</span>
-                    </div>
-                </div>
-                <button onClick={() => setCurrentView('HOME')} className="mt-8 px-6 py-2 bg-white/10 rounded-full hover:bg-white/20 transition">Quay lại</button>
-            </div>
+      
+      {/* VIEW: SLIDE */}
+      {currentView === 'SLIDE' && (
+        <div className="absolute inset-0 z-20 bg-[#05101c]">
+           <SlidePanel onBack={() => setCurrentView('HOME')} />
         </div>
       )}
 

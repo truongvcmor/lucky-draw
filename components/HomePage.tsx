@@ -55,14 +55,14 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
         {/* Card 3: Timeline */}
         <button 
-          onClick={() => onNavigate('TIMELINE')}
+          onClick={() => onNavigate('SLIDE')}
           className="group relative h-64 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden hover:border-mor-gold/50 transition-all duration-500 hover:scale-105 hover:shadow-[0_0_30px_rgba(255,215,0,0.2)]"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-green-900/40 to-teal-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
             <span className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">⏱️</span>
-            <h3 className="text-2xl font-bold text-white uppercase tracking-wider group-hover:text-mor-gold transition-colors">Timeline</h3>
-            <p className="text-gray-400 text-sm mt-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0">Lịch trình chương trình</p>
+            <h3 className="text-2xl font-bold text-white uppercase tracking-wider group-hover:text-mor-gold transition-colors">Slide</h3>
+            <p className="text-gray-400 text-sm mt-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-4 group-hover:translate-y-0">Slide trình chiếu</p>
           </div>
         </button>
 
