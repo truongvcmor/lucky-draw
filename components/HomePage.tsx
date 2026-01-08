@@ -17,7 +17,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           MOR Software HCM
         </h2>
         <h1 className="text-6xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-b from-[#FFF] via-[#FFD700] to-[#B45309] drop-shadow-[0_0_25px_rgba(255,215,0,0.5)]">
-          YEAR END<br/>PARTY 2025
+          YEAR END<br/>PARTY 2026
         </h1>
         <div className="h-1 w-32 bg-mor-gold mx-auto mt-6 rounded-full shadow-[0_0_15px_rgba(255,215,0,0.8)]"></div>
       </div>
