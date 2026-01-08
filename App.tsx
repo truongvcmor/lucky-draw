@@ -75,10 +75,6 @@ const App: React.FC = () => {
   const [showRules, setShowRules] = useState(false); // Rules Popup State
   const [isMuted, setIsMuted] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
-
-  // Logo Error State
-  const [logoError, setLogoError] = useState(false);
-
   
   // Stable Wheel Segments State
   const [wheelSegments, setWheelSegments] = useState<WheelSegment[]>([]);
@@ -340,17 +336,8 @@ const App: React.FC = () => {
     <div className="h-screen bg-[#05101c] flex flex-col relative font-sans text-white overflow-hidden selection:bg-mor-orange selection:text-white">
       
       {/* Global Background */}
-      {/* <div className="absolute inset-0 bg-gradient-to-br from-[#0054A6] via-[#1A3A5E] to-[#F37021] opacity-90 pointer-events-none"></div> */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none"
-        style={{ 
-          backgroundImage: `url('/bg-event.png')`, // Thay 'bg-event.jpg' bằng tên file của bạn
-          filter: 'brightness(0.6)' // Làm tối ảnh một chút để nổi bật vòng quay (tùy chỉnh từ 0.1 - 1.0)
-        }}
-      >
-        {/* Lớp phủ màu nhẹ để giữ vibe của brand MOR (tùy chọn) */}
-        <div className="absolute inset-0 bg-[#05101c]/40"></div>
-      </div>
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0054A6] via-[#1A3A5E] to-[#F37021] opacity-90 pointer-events-none"></div>
+      
       {/* VIEW: HOME */}
       {currentView === 'HOME' && (
         <HomePage onNavigate={(view) => setCurrentView(view as ViewState)} />
@@ -376,75 +363,22 @@ const App: React.FC = () => {
                     <div className="absolute -inset-1 bg-gradient-to-r from-mor-blue to-mor-orange rounded-lg blur opacity-50 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
                     <div className="relative w-16 h-16 md:w-20 md:h-20 bg-white rounded-xl flex items-center justify-center text-mor-blue font-black text-3xl md:text-4xl shadow-2xl border-2 border-white/50">
                     {/* Display Logo in Header if available */}
-                    {/* {customLogo ? (
+                    {customLogo ? (
                         <img src={customLogo} alt="MOR" className="w-12 h-12 md:w-16 md:h-16 object-contain" />
                     ) : (
                         <span>M</span>
-                    )} */}
-                    {/* Display Logo in Header with priority: logo.png -> customLogo -> M */}
-                    {!logoError ? (
-                      <img
-                        src="/logo.png"
-                        alt="MOR"
-                        onError={() => setLogoError(true)}
-                        className="w-12 h-12 md:w-16 md:h-16 object-contain"
-                      />
-                    ) : customLogo ? (
-                      <img
-                        src={customLogo}
-                        alt="MOR"
-                        className="w-12 h-12 md:w-16 md:h-16 object-contain"
-                      />
-                    ) : (
-                      <span>M</span>
                     )}
                     </div>
                 </div>
                 
-                <div className="text-left">
-                    {/* === PHẦN TEXT CHROME HIỆU ỨNG LẤP LÁNH === */}
-                    <div className="relative mb-2 mt-1">
-                        {/* 1. Lớp chữ chính (Base Chrome Text) */}
-                        <h2 
-                            className="relative z-10 text-2xl md:text-4xl font-black tracking-[0.15em] uppercase text-transparent bg-clip-text select-none"
-                            style={{
-                                // Gradient tạo hiệu ứng kim loại có đường chân trời cắt ngang
-                                backgroundImage: 'linear-gradient(to bottom, #ffffff 0%, #d1d5db 48%, #475569 50%, #cbd5e1 52%, #ffffff 100%)',
-                                // Viền chữ để tăng độ sắc nét
-                                WebkitTextStroke: '1px rgba(255, 255, 255, 0.7)',
-                                // Bóng đổ phát sáng
-                                filter: 'drop-shadow(0 0 5px rgba(255, 255, 255, 0.5))'
-                            }}
-                        >
-                            DREAM OF HORIZON
-                        </h2>
-
-                        {/* 2. Các ngôi sao lấp lánh (Sparkles) */}
-                        {/* Sao 1: Góc trên trái */}
-                        <div className="absolute -top-2 -left-2 text-white text-lg animate-twinkle" style={{ animationDelay: '0s' }}>
-                            ✦
-                        </div>
-                        
-                        {/* Sao 2: Góc dưới phải */}
-                        <div className="absolute -bottom-1 right-0 text-[#FFD700] text-xl animate-twinkle" style={{ animationDelay: '0.7s' }}>
-                            ✦
-                        </div>
-                        
-                        {/* Sao 3: Giữa chữ (nhỏ hơn) */}
-                        <div className="absolute top-1 left-1/2 text-white text-xs animate-twinkle" style={{ animationDelay: '1.2s' }}>
-                            ✦
-                        </div>
-
-                        {/* Sao 4: Góc trên phải (màu xanh nhẹ theo tone MOR) */}
-                        <div className="absolute -top-3 right-4 text-mor-blue text-sm animate-twinkle" style={{ animationDelay: '0.4s' }}>
-                            ✦
-                        </div>
-                    </div>
-                    {/* =========================================== */}
-                    <h1 className="text-4xl md:text-6xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-[#fff9c4] via-[#FFD700] to-[#b47d15] drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] uppercase pb-1">
+                <div className="text-left flex flex-col justify-center">
+                    <h2 className="text-lg md:text-2xl font-black tracking-[0.2em] md:tracking-[0.3em] text-transparent bg-clip-text bg-gradient-to-b from-white via-gray-200 to-gray-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] uppercase leading-none mb-1 md:mb-0">
+                      DREAM OF HORIZON
+                    </h2>
+                    <h1 className="text-4xl md:text-6xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-[#fff9c4] via-[#FFD700] to-[#b47d15] drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] uppercase pb-1 leading-none">
                     LUCKY DRAW
                     </h1>
-                    <p className="font-extrabold text-lg md:text-2xl tracking-[0.2em] uppercase mt-0 filter drop-shadow-md">
+                    <p className="font-extrabold text-sm md:text-xl tracking-[0.2em] uppercase mt-1 filter drop-shadow-md">
                     <span className="text-[#F37021]">MOR</span>
                     <span className="text-[#F37021] mx-2">SOFTWARE</span>
                     <span className="text-white">HCM</span>
@@ -549,7 +483,7 @@ const App: React.FC = () => {
                                     1. Đối tượng tham gia
                                 </h3>
                                 <div className="bg-white/5 p-4 rounded-lg border border-white/5 text-sm leading-relaxed">
-                                    <p>Toàn bộ nhân viên chính thức (Staff) và khách mời (Guest) có tên trong danh sách tham dự sự kiện <strong>Year End Party 2025</strong> của MOR Software HCM.</p>
+                                    <p>Toàn bộ nhân viên chính thức (Staff) và khách mời (Guest) có tên trong danh sách tham dự sự kiện <strong>Year End Party 2026</strong> của MOR Software HCM.</p>
                                 </div>
                             </section>
 
@@ -694,44 +628,6 @@ const App: React.FC = () => {
                 </div>
             )}
         </>
-      )}
-
-      {/* Placeholders for other views */}
-      {currentView === 'RECAP' && (
-        <div className="flex-grow flex items-center justify-center relative z-10">
-            <div className="text-center animate-fade-in-up">
-                <h2 className="text-4xl font-bold mb-4">Recap 2025</h2>
-                <p className="text-gray-300 mb-8">Nội dung đang được cập nhật...</p>
-                <button onClick={() => setCurrentView('HOME')} className="px-6 py-2 bg-white/10 rounded-full hover:bg-white/20 transition">Quay lại</button>
-            </div>
-        </div>
-      )}
-      
-      {currentView === 'TIMELINE' && (
-        <div className="flex-grow flex items-center justify-center relative z-10">
-             <div className="text-center animate-fade-in-up">
-                <h2 className="text-4xl font-bold mb-4">Timeline Chương Trình</h2>
-                <div className="space-y-4 text-left max-w-md mx-auto bg-black/40 p-8 rounded-xl border border-white/10">
-                    <div className="flex gap-4 border-b border-white/10 pb-2">
-                        <span className="text-mor-gold font-bold">18:00</span>
-                        <span>Đón khách & Check-in</span>
-                    </div>
-                    <div className="flex gap-4 border-b border-white/10 pb-2">
-                        <span className="text-mor-gold font-bold">18:30</span>
-                        <span>Khai mạc & Speech</span>
-                    </div>
-                    <div className="flex gap-4 border-b border-white/10 pb-2">
-                        <span className="text-mor-gold font-bold">19:00</span>
-                        <span>Nhập tiệc & Minigame</span>
-                    </div>
-                    <div className="flex gap-4 border-b border-white/10 pb-2">
-                        <span className="text-mor-gold font-bold">20:30</span>
-                        <span>Lucky Draw</span>
-                    </div>
-                </div>
-                <button onClick={() => setCurrentView('HOME')} className="mt-8 px-6 py-2 bg-white/10 rounded-full hover:bg-white/20 transition">Quay lại</button>
-            </div>
-        </div>
       )}
 
       {/* --- GLOBAL CONTROL BAR --- */}
