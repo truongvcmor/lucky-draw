@@ -626,6 +626,9 @@ interface AdminPanelProps {
   onAddPrize: (p: Omit<Prize, 'id'>) => void;
   onUpdatePrize: (p: Prize) => void;
   onDeletePrize: (id: string) => void;
+
+  // Factory Props
+  onFactoryReset: () => void; 
   
   // Logo Props
   onUploadLogo: (base64: string) => void;
@@ -662,7 +665,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   onUpdatePrize,
   onDeletePrize,
   onUploadLogo,
-  onReset
+  onReset,
+  onFactoryReset
 }) => {
   const [activeTab, setActiveTab] = useState<Tab>('PARTICIPANTS');
   const [confirmState, setConfirmState] = useState<ConfirmState | null>(null);
@@ -829,6 +833,20 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       confirmColor: "orange",
       onConfirm: () => {
         onReset();
+        setConfirmState(null);
+      }
+    });
+  };
+
+  const triggerFactoryReset = () => {
+    setConfirmState({
+      isOpen: true,
+      title: "Khôi phục Dữ liệu Mẫu",
+      message: "CẢNH BÁO: Hành động này sẽ XÓA TOÀN BỘ dữ liệu hiện tại (Người chơi, Giải thưởng, Lịch sử) và khôi phục về trạng thái mẫu ban đầu (80 người). Bạn có chắc chắn không?",
+      confirmLabel: "Khôi phục",
+      confirmColor: "red",
+      onConfirm: () => {
+        onFactoryReset();
         setConfirmState(null);
       }
     });
@@ -1024,7 +1042,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                                     filteredParticipants.map(p => {
                                         const isBlacklisted = blacklistedNumbers.includes(p.assignedNumber);
                                         const isWinner = history.includes(p.assignedNumber);
-                                        const isSenior = p.seniorityYears > 3 && p.type === UserType.EMPLOYEE;
+                                        const isSenior = p.seniorityYears >= 3 && p.type === UserType.EMPLOYEE;
                                         const isEditing = editingId === p.id;
                                         return (
                                         <tr key={p.id} className={`hover:bg-white/5 transition-colors group ${isEditing ? 'bg-mor-orange/10' : ''}`}>
@@ -1185,6 +1203,21 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                             className="border border-red-500/50 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded-lg transition text-xs font-bold uppercase tracking-wider cursor-pointer"
                           >
                             Reset
+                          </button>
+                      </div>
+
+                      {/* NEW BUTTON: Factory Reset */}
+                      <div className="flex items-center justify-between pt-2">
+                          <div>
+                            <div className="font-bold text-white">Khôi phục Dữ liệu Mẫu (Seed)</div>
+                            <div className="text-xs text-gray-400">Xóa sạch dữ liệu hiện tại và nạp lại dữ liệu mẫu ban đầu (80 người).</div>
+                          </div>
+                          <button 
+                            type="button"
+                            onClick={triggerFactoryReset}
+                            className="border border-blue-500/50 text-blue-400 hover:bg-blue-600 hover:text-white px-4 py-2 rounded-lg transition text-xs font-bold uppercase tracking-wider cursor-pointer"
+                          >
+                            Khôi phục
                           </button>
                       </div>
                    </div>

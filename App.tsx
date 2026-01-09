@@ -43,6 +43,16 @@ const WHEEL_COLORS = [
   { bg: '#ed5836', text: '#FFFFFF' },
 ];
 
+// Local Storage Keys
+const STORAGE_KEY = {
+  PARTICIPANTS: 'mor_data_participants',
+  PRIZES: 'mor_data_prizes',
+  WINNERS: 'mor_data_winners',
+  HISTORY: 'mor_data_history',
+  BLACKLIST: 'mor_data_blacklist',
+  LOGO: 'mor_data_custom_logo'
+};
+
 type ViewState = 'HOME' | 'GAME' | 'RECAP' | 'SLIDE';
 
 interface HistoryState {
@@ -54,16 +64,51 @@ interface HistoryState {
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>('HOME');
   
-  const [participants, setParticipants] = useState<Participant[]>(SEED_PARTICIPANTS);
-  const [blacklistedNumbers, setBlacklistedNumbers] = useState<number[]>([13, 44, 49, 53, 7, 21, 66, 77]); 
+  // const [participants, setParticipants] = useState<Participant[]>(SEED_PARTICIPANTS);
+  // const [blacklistedNumbers, setBlacklistedNumbers] = useState<number[]>([13, 44, 49, 53, 7, 21, 66, 77]); 
   
-  // Game State
-  const [winners, setWinners] = useState<number[]>([]);
-  const [winHistory, setWinHistory] = useState<WinRecord[]>([]);
-  const [prizes, setPrizes] = useState<Prize[]>(SEED_PRIZES);
+  // // Game State
+  // const [winners, setWinners] = useState<number[]>([]);
+  // const [winHistory, setWinHistory] = useState<WinRecord[]>([]);
+  // const [prizes, setPrizes] = useState<Prize[]>(SEED_PRIZES);
   
-  // Custom Logo State
-  const [customLogo, setCustomLogo] = useState<string | null>(null);
+  // // Custom Logo State
+  // const [customLogo, setCustomLogo] = useState<string | null>(null);
+
+  // 1. Participants (Nhân viên & Khách mời)
+  const [participants, setParticipants] = useState<Participant[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY.PARTICIPANTS);
+    return saved ? JSON.parse(saved) : SEED_PARTICIPANTS;
+  });
+
+  // 2. Blacklist (Danh sách số loại trừ)
+  const [blacklistedNumbers, setBlacklistedNumbers] = useState<number[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY.BLACKLIST);
+    return saved ? JSON.parse(saved) : [13, 44, 49, 53, 7, 21, 66, 77];
+  });
+  
+  // 3. Game State (Winners - Các số đã trúng)
+  const [winners, setWinners] = useState<number[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY.WINNERS);
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // 4. Win History (Lịch sử chi tiết)
+  const [winHistory, setWinHistory] = useState<WinRecord[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY.HISTORY);
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // 5. Prizes (Giải thưởng & Số lượng còn lại)
+  const [prizes, setPrizes] = useState<Prize[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY.PRIZES);
+    return saved ? JSON.parse(saved) : SEED_PRIZES;
+  });
+  
+  // 6. Custom Logo
+  const [customLogo, setCustomLogo] = useState<string | null>(() => {
+    return localStorage.getItem(STORAGE_KEY.LOGO) || null;
+  });
   
   // Undo/Redo Stacks
   const [undoStack, setUndoStack] = useState<HistoryState[]>([]);
@@ -90,6 +135,40 @@ const App: React.FC = () => {
   
   const getWinnerInfo = (num: number) => participants.find(p => p.assignedNumber === num);
 
+  // Lưu Participants
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY.PARTICIPANTS, JSON.stringify(participants));
+  }, [participants]);
+
+  // Lưu Prizes
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY.PRIZES, JSON.stringify(prizes));
+  }, [prizes]);
+
+  // Lưu Winners
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY.WINNERS, JSON.stringify(winners));
+  }, [winners]);
+
+  // Lưu History
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY.HISTORY, JSON.stringify(winHistory));
+  }, [winHistory]);
+
+  // Lưu Blacklist
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY.BLACKLIST, JSON.stringify(blacklistedNumbers));
+  }, [blacklistedNumbers]);
+
+  // Lưu Logo
+  useEffect(() => {
+    if (customLogo) {
+      localStorage.setItem(STORAGE_KEY.LOGO, customLogo);
+    } else {
+      localStorage.removeItem(STORAGE_KEY.LOGO);
+    }
+  }, [customLogo]);
+  
   // Wheel Segment Logic
   useEffect(() => {
     let rawSegments: Partial<WheelSegment>[] = [];
@@ -107,7 +186,7 @@ const App: React.FC = () => {
 
       rawSegments.push(baseSegment);
 
-      if (p.seniorityYears > 3 && p.type === UserType.EMPLOYEE) {
+      if (p.seniorityYears >= 3 && p.type === UserType.EMPLOYEE) {
         rawSegments.push({
           ...baseSegment,
           text: `${p.assignedNumber}`, 
@@ -226,12 +305,12 @@ const App: React.FC = () => {
     if (isSpinning) return;
     
     if (!selectedPrizeId) {
-      alert("Vui lòng chọn Giải Thưởng trước khi quay!");
+      // alert("Vui lòng chọn Giải Thưởng trước khi quay!");
       return;
     }
 
     if (selectedPrize && selectedPrize.quantity <= 0) {
-      alert("Giải thưởng này đã hết số lượng!");
+      // alert("Giải thưởng này đã hết số lượng!");
       return;
     }
 
@@ -248,7 +327,7 @@ const App: React.FC = () => {
     const weightedPool: number[] = [];
     potentialWinners.forEach(p => {
       weightedPool.push(p.assignedNumber);
-      if (p.seniorityYears > 3 && p.type === UserType.EMPLOYEE) {
+      if (p.seniorityYears >= 3 && p.type === UserType.EMPLOYEE) {
          weightedPool.push(p.assignedNumber);
       }
     });
@@ -323,6 +402,24 @@ const App: React.FC = () => {
     setCurrentWinner(null);
     setUndoStack([]);
     setRedoStack([]);
+  };
+
+  const handleFactoryReset = () => {
+    setParticipants(SEED_PARTICIPANTS);
+    setPrizes(SEED_PRIZES);
+    setBlacklistedNumbers([13, 44, 49, 53, 7, 21, 66, 77]); // Blacklist mặc định
+    
+    // Xóa lịch sử chơi
+    setWinners([]);
+    setWinHistory([]);
+    setCurrentWinner(null);
+    
+    // Xóa các stack undo/redo
+    setUndoStack([]);
+    setRedoStack([]);
+
+    // Xóa logo tùy chỉnh
+    setCustomLogo(null);
   };
 
   const handleAddPrize = (p: Omit<Prize, 'id'>) => {
@@ -710,15 +807,30 @@ const App: React.FC = () => {
       
       
       {/* VIEW: SLIDE */}
-      {currentView === 'SLIDE' && (
+      {/* {currentView === 'SLIDE' && (
         <div className="absolute inset-0 z-20 bg-[#05101c]">
            <SlidePanel onBack={() => setCurrentView('HOME')} />
         </div>
-      )}
+      )} */}
+
+      <div 
+        className="absolute inset-0 z-20 bg-[#05101c]"
+        style={{ 
+          // Kỹ thuật Keep-Alive:
+          // Nếu đang là SLIDE -> Hiện (block)
+          // Nếu không phải -> Ẩn (none) nhưng vẫn giữ nguyên trong DOM
+          display: currentView === 'SLIDE' ? 'block' : 'none' 
+        }}
+      >
+         {/* SlidePanel sẽ chỉ được mount 1 lần duy nhất khi vào app, iframe sẽ không bị reload */}
+         <SlidePanel onBack={() => setCurrentView('HOME')} />
+      </div>
 
       {/* --- GLOBAL CONTROL BAR --- */}
       {currentView !== 'HOME' && (
         <ControlBar 
+            currentView={currentView}
+            onNavigate={(view) => setCurrentView(view)}
             onHome={() => setCurrentView('HOME')}
             onUndo={handleUndo}
             onRedo={handleRedo}
@@ -748,6 +860,9 @@ const App: React.FC = () => {
         onAddPrize={handleAddPrize}
         onUpdatePrize={handleUpdatePrize}
         onDeletePrize={handleDeletePrize}
+
+        // Factory Reset
+        onFactoryReset={handleFactoryReset} 
 
         // Logo upload
         onUploadLogo={setCustomLogo}

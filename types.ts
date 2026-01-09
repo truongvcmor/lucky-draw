@@ -8,7 +8,7 @@ export interface Participant {
   id: string;
   name: string;
   type: UserType;
-  seniorityYears: number; // > 3 years gets double weight
+  seniorityYears: number; // >= 3 years gets double weight
   assignedNumber: number;
 }
 
