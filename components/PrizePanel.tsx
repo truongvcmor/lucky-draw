@@ -68,6 +68,12 @@ const PrizePanel: React.FC<PrizePanelProps> = ({ prizes, selectedPrizeId, onSele
                   <div className={`font-black uppercase tracking-wide leading-tight ${isSelected ? 'text-mor-gold text-lg drop-shadow-sm' : 'text-gray-200 text-sm group-hover:text-white'}`}>
                     {prize.name}
                   </div>
+
+                {prize.info && (
+                  <div className={`text-xs font-semibold mt-1 truncate ${isSelected ? 'text-white/90' : 'text-gray-400'}`}>
+                    {prize.info}
+                  </div>
+                )}
                   
                   {/* Progress Line */}
                   <div className="w-full h-1.5 mt-3 bg-black/40 rounded-full overflow-hidden">

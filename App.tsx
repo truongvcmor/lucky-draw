@@ -28,11 +28,11 @@ const SEED_PARTICIPANTS: Participant[] = Array.from({ length: 60 }, (_, i) => ({
 );
 
 const SEED_PRIZES: Prize[] = [
-  { id: 'p1', name: 'Giải Đặc Biệt', quantity: 1, initialQuantity: 1, color: '#FFD700' },
-  { id: 'p2', name: 'Giải Nhất', quantity: 1, initialQuantity: 1, color: '#F37021' },
-  { id: 'p3', name: 'Giải Nhì', quantity: 2, initialQuantity: 2, color: '#0054A6' },
-  { id: 'p4', name: 'Giải Ba', quantity: 3, initialQuantity: 3, color: '#FFFFFF' },
-  { id: 'p5', name: 'Giải Khuyến Khích', quantity: 5, initialQuantity: 5, color: '#333333' },
+  { id: 'p1', name: 'Giải Đặc Biệt', quantity: 1, initialQuantity: 1, color: '#FFD700', info: 'Giải thưởng đặc biệt nhất' },
+  { id: 'p2', name: 'Giải Nhất', quantity: 1, initialQuantity: 1, color: '#F37021', info: 'Giải thưởng lớn nhất' },
+  { id: 'p3', name: 'Giải Nhì', quantity: 2, initialQuantity: 2, color: '#0054A6', info: 'Giải thưởng cao cấp' },
+  { id: 'p4', name: 'Giải Ba', quantity: 3, initialQuantity: 3, color: '#FFFFFF', info: 'Giải thưởng trung bình' },
+  { id: 'p5', name: 'Giải Khuyến Khích', quantity: 5, initialQuantity: 5, color: '#333333', info: 'Giải thưởng khuyến khích' },
 ];
 
 // MOR Brand Palette for Wheel
@@ -466,13 +466,61 @@ const App: React.FC = () => {
                 <span>Thể lệ</span>
             </button>
 
+            {/* <div className="absolute top-4 right-4 md:top-6 md:right-6 z-40 text-right animate-fade-in-down">
+              <p className="font-extrabold text-sm md:text-xl tracking-[0.2em] uppercase filter drop-shadow-md">
+                  <span className="text-[#F37021]">MOR</span>
+                  <span className="text-[#F37021] mx-2">SOFTWARE</span>
+                  <span className="text-white">HCM</span>
+              </p>
+          </div> */}
+
+            {/* --- GÓC PHẢI TRÊN: TEXT + LOGO (Xếp dọc - Căn giữa nhau) --- */}
+            <div className="absolute top-4 right-4 md:top-6 md:right-6 z-40 flex flex-col items-center gap-0 animate-fade-in-down">
+                
+                {/* 2. Phần Logo */}
+                <div 
+                    className="cursor-pointer hover:opacity-80 transition-opacity -mt-10" 
+                    onClick={() => setIsAdminOpen(true)}
+                    title="Nhấn để mở Admin"
+                >
+                    {!logoError ? (
+                        <img
+                            src="/logo-mor.png"
+                            alt="MOR"
+                            onError={() => setLogoError(true)}
+                            // Sửa lại kích thước: h-16 (64px) cho mobile, h-24 (96px) cho desktop
+                            // Đây là kích thước rất to và rõ ràng
+                            className="w-auto h-16 md:h-32 object-contain drop-shadow-lg"
+                        />
+                    ) : customLogo ? (
+                        <img
+                            src={customLogo}
+                            alt="MOR"
+                            className="w-auto h-16 md:h-24 object-contain drop-shadow-lg"
+                        />
+                    ) : (
+                        <span className="font-black text-white text-2xl tracking-widest drop-shadow-md">MOR</span>
+                    )}
+                </div>
+
+                {/* 1. Phần Text MOR SOFTWARE HCM */}
+                {/* Thêm text-center để nếu chữ có xuống dòng thì vẫn giữa */}
+                <div className="text-center -mt-8"> 
+                    <p className="font-extrabold text-sm md:text-xl tracking-[0.2em] uppercase filter drop-shadow-md leading-tight">
+                        <span className="text-[#F37021]">MOR</span>
+                        <span className="text-[#F37021] mx-1.5">SOFTWARE</span>
+                        <span className="text-white">HCM</span>
+                    </p>
+                </div>
+
+            </div>
             {/* Header */}
             <header className="relative z-10 pt-4 pb-1 flex flex-col items-center justify-center shrink-0">
                 <div className="flex items-center space-x-6 mb-1 animate-fade-in-down transform scale-75 md:scale-100 origin-top">
                 {/* Logo Box */}
-                <div className="relative group">
+                {/* <div className="relative group">
                     <div className="absolute -inset-1 bg-gradient-to-r from-mor-blue to-mor-orange rounded-lg blur opacity-50 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                    <div className="relative w-16 h-16 md:w-20 md:h-20 bg-white rounded-xl flex items-center justify-center text-mor-blue font-black text-3xl md:text-4xl shadow-2xl border-2 border-white/50">
+                    <div className="relative w-16 h-16 md:w-20 md:h-20 bg-white rounded-xl flex items-center justify-center text-mor-blue font-black text-3xl md:text-4xl shadow-2xl border-2 border-white/50"> */}
                     {/* Display Logo in Header if available */}
                     {/* {customLogo ? (
                         <img src={customLogo} alt="MOR" className="w-12 h-12 md:w-16 md:h-16 object-contain" />
@@ -480,7 +528,7 @@ const App: React.FC = () => {
                         <span>M</span>
                     )} */}
                     {/* Display Logo in Header with priority: logo.png -> customLogo -> M */}
-                    {!logoError ? (
+                    {/* {!logoError ? (
                       <img
                         src="/logo.png"
                         alt="MOR"
@@ -497,7 +545,7 @@ const App: React.FC = () => {
                       <span>M</span>
                     )}
                     </div>
-                </div>
+                </div> */}
                 
                 <div className="text-left">
                     {/* === PHẦN TEXT CHROME HIỆU ỨNG LẤP LÁNH === */}
@@ -542,11 +590,11 @@ const App: React.FC = () => {
                     <h1 className="text-4xl md:text-6xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-[#fff9c4] via-[#FFD700] to-[#b47d15] drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] uppercase pb-1">
                     LUCKY DRAW
                     </h1>
-                    <p className="font-extrabold text-lg md:text-2xl tracking-[0.2em] uppercase mt-0 filter drop-shadow-md">
+                    {/* <p className="font-extrabold text-lg md:text-2xl tracking-[0.2em] uppercase mt-0 filter drop-shadow-md">
                     <span className="text-[#F37021]">MOR</span>
                     <span className="text-[#F37021] mx-2">SOFTWARE</span>
                     <span className="text-white">HCM</span>
-                    </p>
+                    </p> */}
                 </div>
                 </div>
             </header>
@@ -725,7 +773,7 @@ const App: React.FC = () => {
                                     Xin chúc mừng
                                 </h2>
 
-                                {selectedPrize && (
+                                {/* {selectedPrize && (
                                     <div className="mb-8 inline-flex items-center gap-2 bg-gradient-to-r from-mor-blue/80 to-[#003d7a]/80 px-8 py-2 rounded-full border border-mor-gold/50 shadow-[0_0_15px_rgba(0,84,166,0.5)]">
                                       <span className="text-xl">🏆</span>
                                       <span className="text-white font-bold tracking-widest uppercase text-base md:text-lg">
@@ -733,7 +781,26 @@ const App: React.FC = () => {
                                       </span>
                                       <span className="text-xl">🏆</span>
                                     </div>
-                                )}
+                                )} */}
+                                {selectedPrize && (
+                                  <div className="mb-8 flex flex-col items-center gap-2">
+                                      {/* Tên giải */}
+                                      <div className="inline-flex items-center gap-2 bg-gradient-to-r from-mor-blue/80 to-[#003d7a]/80 px-8 py-2 rounded-full border border-mor-gold/50 shadow-[0_0_15px_rgba(0,84,166,0.5)]">
+                                          <span className="text-xl">🏆</span>
+                                          <span className="text-white font-bold tracking-widest uppercase text-base md:text-lg">
+                                          {selectedPrize.name}
+                                          </span>
+                                          <span className="text-xl">🏆</span>
+                                      </div>
+                                      
+                                      {/* --- THÊM: Hiển thị chi tiết giải thưởng --- */}
+                                      {selectedPrize.info && (
+                                          <div className="text-mor-gold font-bold text-xl uppercase tracking-wider drop-shadow-md mt-2 animate-pulse">
+                                              {selectedPrize.info}
+                                          </div>
+                                      )}
+                                  </div>
+                              )}
                                 
                                 <div className="relative inline-block mb-10 py-4">
                                     {/* Number Glow */}

@@ -19,6 +19,7 @@ export interface Prize {
   initialQuantity: number; // Total quantity for progress bar
   image?: string; // Optional icon/image
   color: string;
+  info?: string;
 }
 
 export interface Settings {

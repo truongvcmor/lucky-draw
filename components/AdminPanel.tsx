@@ -682,6 +682,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   // --- Prize Form States ---
   const [prizeName, setPrizeName] = useState('');
   const [prizeQty, setPrizeQty] = useState('');
+  const [prizeInfo, setPrizeInfo] = useState('');
   const [editingPrizeId, setEditingPrizeId] = useState<string | null>(null);
 
   // --- PARTICIPANT HANDLERS ---
@@ -740,6 +741,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
           ...existing,
           name: prizeName,
           quantity: qty,
+          info: prizeInfo,
           initialQuantity: Math.max(qty, existing.initialQuantity) // Ensure initial is at least current
         });
       }
@@ -748,6 +750,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       onAddPrize({
         name: prizeName,
         quantity: qty,
+        info: prizeInfo,
         initialQuantity: qty,
         color: '#FFD700'
       });
@@ -755,17 +758,20 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
 
     setPrizeName('');
     setPrizeQty('');
+    setPrizeInfo('');
   };
 
   const handleEditPrize = (p: Prize) => {
     setPrizeName(p.name);
     setPrizeQty(p.quantity.toString());
+    setPrizeInfo(p.info || '');
     setEditingPrizeId(p.id);
   };
 
   const handleCancelEditPrize = () => {
     setPrizeName('');
     setPrizeQty('');
+    setPrizeInfo('');
     setEditingPrizeId(null);
   };
 
@@ -1097,32 +1103,44 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                             <button type="button" onClick={handleCancelEditPrize} className="text-xs text-gray-400 hover:text-white underline cursor-pointer">Hủy bỏ</button>
                             )}
                         </h3>
-                        <form onSubmit={handleSubmitPrize} className="flex flex-col md:flex-row gap-3">
-                            <input 
-                            type="text" 
-                            value={prizeName} 
-                            onChange={e => setPrizeName(e.target.value)} 
-                            className="flex-1 bg-gray-900/50 text-white px-4 py-2 rounded-lg border border-gray-700 focus:border-mor-gold focus:outline-none"
-                            placeholder="Tên giải (VD: Giải Nhất)"
-                            required
-                            />
-                            <input 
-                            type="number" 
-                            value={prizeQty} 
-                            onChange={e => setPrizeQty(e.target.value)} 
-                            className="w-full md:w-32 bg-gray-900/50 text-white px-4 py-2 rounded-lg border border-gray-700 focus:border-mor-gold focus:outline-none"
-                            placeholder="SL"
-                            min="1"
-                            required
-                            />
-                            <button 
-                            type="submit" 
-                            className={`font-bold py-2 px-6 rounded-lg shadow-lg transition-transform active:scale-95 text-white cursor-pointer
-                                ${editingPrizeId ? 'bg-mor-orange hover:bg-orange-600' : 'bg-mor-gold hover:bg-yellow-500 text-black'}
-                            `}
-                            >
-                            {editingPrizeId ? 'Lưu' : 'Thêm'}
-                            </button>
+                        <form onSubmit={handleSubmitPrize} className="flex flex-col md:flex-col gap-3">
+                            <div className="flex gap-3">
+                              <input 
+                              type="text" 
+                              value={prizeName} 
+                              onChange={e => setPrizeName(e.target.value)} 
+                              className="flex-1 bg-gray-900/50 text-white px-4 py-2 rounded-lg border border-gray-700 focus:border-mor-gold focus:outline-none"
+                              placeholder="Tên giải (VD: Giải Nhất)"
+                              required
+                              />
+                              <input 
+                              type="number" 
+                              value={prizeQty} 
+                              onChange={e => setPrizeQty(e.target.value)} 
+                              className="w-full md:w-32 bg-gray-900/50 text-white px-4 py-2 rounded-lg border border-gray-700 focus:border-mor-gold focus:outline-none"
+                              placeholder="SL"
+                              min="1"
+                              required
+                              />
+                            </div>
+
+                            <div className="flex gap-3">
+                              <input 
+                              type="text" 
+                              value={prizeInfo} 
+                              onChange={e => setPrizeInfo(e.target.value)} 
+                              className="flex-1 bg-gray-900/50 text-white px-4 py-2 rounded-lg border border-gray-700 focus:border-mor-gold focus:outline-none placeholder-gray-500 text-sm"
+                              placeholder="Chi tiết / Giá trị (VD: 10.000.000 VNĐ - Tùy chọn)"
+                              />
+                              <button 
+                              type="submit" 
+                              className={`font-bold py-2 px-6 rounded-lg shadow-lg transition-transform active:scale-95 text-white cursor-pointer
+                                  ${editingPrizeId ? 'bg-mor-orange hover:bg-orange-600' : 'bg-mor-gold hover:bg-yellow-500 text-black'}
+                              `}
+                              >
+                              {editingPrizeId ? 'Lưu' : 'Thêm'}
+                              </button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -1149,6 +1167,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                                     </div>
                                     <div>
                                         <div className="font-bold text-lg text-white">{p.name}</div>
+                                        {p.info && <div className="text-sm text-mor-gold font-medium">{p.info}</div>}
                                         <div className="text-xs text-gray-400">Số lượng: <span className="text-mor-gold font-bold">{p.quantity}</span> / {p.initialQuantity}</div>
                                     </div>
                                 </div>
