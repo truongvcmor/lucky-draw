@@ -474,20 +474,39 @@ const Wheel: React.FC<WheelProps> = ({ segments, isSpinning, winnerSegmentIndex,
     if (distToZero < 0) distToZero += 2 * Math.PI;
 
     // Add extra full spins for drama (e.g., 10-15 spins)
-    const extraSpins = (10 + Math.random() * 5) * 2 * Math.PI; 
+    // const extraSpins = (10 + Math.random() * 5) * 2 * Math.PI; 
+    // const extraSpins = (4 + Math.random() * 2) * 2 * Math.PI; 
     
     // Total rotation to add to the CURRENT rotation
-    const totalRotationChange = extraSpins + distToZero;
+    // const totalRotationChange = extraSpins + distToZero;
+
+    const baseSpins = segments.filter(s => !s.isBlacklisted).length === 1
+      ? 4
+      : 6;
+
+    // Góc chính xác để segment target nằm ở kim (3h)
+    const targetRotation =
+      baseSpins * 2 * Math.PI +
+      (2 * Math.PI - ((targetIndex + 0.5) * arcSize));
+
+    // Tổng rotation cần đạt
+    const totalRotationChange =
+      targetRotation -
+      (startRotation % (2 * Math.PI));
     
     const startTime = performance.now();
-    const duration = 8000; // 8 seconds for suspense
+    // const duration = 5000; // 8 seconds for suspense
+    const activeCount = segments.filter(s => !s.isBlacklisted).length;
+    
+    const duration = activeCount === 1 ? 3000 : 5000;
 
     const animate = (currentTime: number) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       
       // Easing: Cubic Ease Out -> starts fast, slows down
-      const ease = 1 - Math.pow(1 - progress, 3);
+      // const ease = 1 - Math.pow(1 - progress, 3);
+      const ease = 1 - Math.pow(1 - progress, 4); 
       
       // Interpolate from Start Rotation
       const currentRot = startRotation + (totalRotationChange * ease);
@@ -510,13 +529,16 @@ const Wheel: React.FC<WheelProps> = ({ segments, isSpinning, winnerSegmentIndex,
         lastClickRef.current = 0;
         
         // CRITICAL: Determine EXACTLY what segment we stopped on
-        const finalSegment = getCurrentSegment();
-        if (finalSegment) {
-            onSpinFinish(finalSegment.value);
-        } else {
-            // Fallback (should not happen if segments exist)
-            onSpinFinish(0); 
-        }
+        // const finalSegment = getCurrentSegment();
+
+
+        // if (finalSegment) {
+        //     onSpinFinish(finalSegment.value);
+        // } else {
+        //     // Fallback (should not happen if segments exist)
+        //     onSpinFinish(0); 
+        // }
+        onSpinFinish(segments[targetIndex].value);
       }
     };
 

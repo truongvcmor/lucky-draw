@@ -618,7 +618,8 @@ interface AdminPanelProps {
   onDeleteParticipant: (id: string) => void;
   onClearAllParticipants: () => void;
   blacklistedNumbers: number[];
-  onUpdateBlacklist: (nums: number[]) => void;
+  // onUpdateBlacklist: (nums: number[]) => void;
+  onToggleBlacklist: (num: number) => void; 
   history: any[];
   
   // Prize Props
@@ -658,7 +659,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
   onDeleteParticipant,
   onClearAllParticipants,
   blacklistedNumbers, 
-  onUpdateBlacklist,
+  // onUpdateBlacklist,
+  onToggleBlacklist,
   history,
   prizes,
   onAddPrize,
@@ -858,13 +860,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
     });
   };
 
-  const toggleBlacklist = (num: number) => {
-    if (blacklistedNumbers.includes(num)) {
-      onUpdateBlacklist(blacklistedNumbers.filter(n => n !== num));
-    } else {
-      onUpdateBlacklist([...blacklistedNumbers, num]);
-    }
-  };
+  // const toggleBlacklist = (num: number) => {
+  //   if (blacklistedNumbers.includes(num)) {
+  //     onUpdateBlacklist(blacklistedNumbers.filter(n => n !== num));
+  //   } else {
+  //     onUpdateBlacklist([...blacklistedNumbers, num]);
+  //   }
+  // };
 
   // --- Filters ---
   const filteredParticipants = useMemo(() => {
@@ -1046,7 +1048,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                                     </tr>
                                 ) : (
                                     filteredParticipants.map(p => {
-                                        const isBlacklisted = blacklistedNumbers.includes(p.assignedNumber);
+                                        // const isBlacklisted = blacklistedNumbers.includes(p.assignedNumber);
+                                        const isBlacklisted = blacklistedNumbers.some(n => Number(n) === Number(p.assignedNumber));
                                         const isWinner = history.includes(p.assignedNumber);
                                         const isSenior = p.seniorityYears >= 3 && p.type === UserType.EMPLOYEE;
                                         const isEditing = editingId === p.id;
@@ -1068,7 +1071,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                                             </td>
                                             <td className="p-3 text-right">
                                             <div className="flex items-center justify-end space-x-2">
-                                                <button type="button" onClick={() => toggleBlacklist(p.assignedNumber)} disabled={isWinner} className={`w-8 h-6 rounded-full relative transition-colors focus:outline-none cursor-pointer border border-transparent hover:border-white/20 ${isWinner ? 'opacity-30 cursor-not-allowed bg-gray-600' : (isBlacklisted ? 'bg-gray-600' : 'bg-green-600')}`}>
+                                                <button type="button" onClick={() => onToggleBlacklist(p.assignedNumber)} disabled={isWinner} className={`w-8 h-6 rounded-full relative transition-colors focus:outline-none cursor-pointer border border-transparent hover:border-white/20 ${isWinner ? 'opacity-30 cursor-not-allowed bg-gray-600' : (isBlacklisted ? 'bg-gray-600' : 'bg-green-600')}`}>
                                                 <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform shadow-sm ${isBlacklisted ? '' : 'translate-x-2'}`} />
                                                 </button>
                                                 <button type="button" onClick={() => handleEditParticipant(p)} disabled={isWinner} className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700 rounded transition disabled:opacity-30 cursor-pointer">✏️</button>

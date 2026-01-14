@@ -50,7 +50,9 @@ const STORAGE_KEY = {
   WINNERS: 'mor_data_winners',
   HISTORY: 'mor_data_history',
   BLACKLIST: 'mor_data_blacklist',
-  LOGO: 'mor_data_custom_logo'
+  LOGO: 'mor_data_custom_logo',
+  UNDO: 'mor_data_undo_stack',
+  REDO: 'mor_data_redo_stack',
 };
 
 type ViewState = 'HOME' | 'GAME' | 'RECAP' | 'SLIDE';
@@ -82,9 +84,22 @@ const App: React.FC = () => {
   });
 
   // 2. Blacklist (Danh sách số loại trừ)
+  // const [blacklistedNumbers, setBlacklistedNumbers] = useState<number[]>(() => {
+  //   const saved = localStorage.getItem(STORAGE_KEY.BLACKLIST);
+  //   return saved ? JSON.parse(saved) : [13, 44, 49, 53, 7, 21, 66, 77];
+  // });
+
   const [blacklistedNumbers, setBlacklistedNumbers] = useState<number[]>(() => {
     const saved = localStorage.getItem(STORAGE_KEY.BLACKLIST);
-    return saved ? JSON.parse(saved) : [13, 44, 49, 53, 7, 21, 66, 77];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return Array.isArray(parsed) ? parsed.map((n: any) => Number(n)) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+    return [13, 44, 49, 53, 7, 21, 66, 77];
   });
   
   // 3. Game State (Winners - Các số đã trúng)
@@ -111,8 +126,18 @@ const App: React.FC = () => {
   });
   
   // Undo/Redo Stacks
-  const [undoStack, setUndoStack] = useState<HistoryState[]>([]);
-  const [redoStack, setRedoStack] = useState<HistoryState[]>([]);
+  // const [undoStack, setUndoStack] = useState<HistoryState[]>([]);
+  // const [redoStack, setRedoStack] = useState<HistoryState[]>([]);
+
+  const [undoStack, setUndoStack] = useState<HistoryState[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY.UNDO);
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [redoStack, setRedoStack] = useState<HistoryState[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY.REDO);
+    return saved ? JSON.parse(saved) : [];
+  });
 
   const [selectedPrizeId, setSelectedPrizeId] = useState<string | null>(null);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -168,6 +193,16 @@ const App: React.FC = () => {
       localStorage.removeItem(STORAGE_KEY.LOGO);
     }
   }, [customLogo]);
+
+  // Lưu Undo Stack
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY.UNDO, JSON.stringify(undoStack));
+  }, [undoStack]);
+
+  // Lưu Redo Stack
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY.REDO, JSON.stringify(redoStack));
+  }, [redoStack]);
   
   // Wheel Segment Logic
   useEffect(() => {
@@ -176,7 +211,8 @@ const App: React.FC = () => {
     participants.forEach((p) => {
       if (winners.includes(p.assignedNumber)) return;
 
-      const isBlacklisted = blacklistedNumbers.includes(p.assignedNumber);
+      // const isBlacklisted = blacklistedNumbers.includes(p.assignedNumber);
+      const isBlacklisted = blacklistedNumbers.some(bn => Number(bn) === Number(p.assignedNumber));
       
       const baseSegment = {
         text: p.assignedNumber.toString(),
@@ -301,6 +337,59 @@ const App: React.FC = () => {
   }, [showPopup]);
 
 
+  // const spinLogic = () => {
+  //   if (isSpinning) return;
+    
+  //   if (!selectedPrizeId) {
+  //     // alert("Vui lòng chọn Giải Thưởng trước khi quay!");
+  //     return;
+  //   }
+
+  //   if (selectedPrize && selectedPrize.quantity <= 0) {
+  //     // alert("Giải thưởng này đã hết số lượng!");
+  //     return;
+  //   }
+
+  //   // const potentialWinners = participants.filter(p => 
+  //   //   !blacklistedNumbers.includes(p.assignedNumber) &&
+  //   //   !winners.includes(p.assignedNumber)
+  //   // );
+  //   // const potentialWinners = participants.filter(p => 
+  //   //   !blacklistedNumbers.some(bn => Number(bn) === Number(p.assignedNumber)) &&
+  //   //   !winners.includes(p.assignedNumber)
+  //   // );
+
+  //   const potentialWinners = participants.filter(p => {
+  //     // Kiểm tra xem số này có nằm trong blacklist không (So sánh dạng Số)
+  //     const isBlocked = blacklistedNumbers.some(bn => Number(bn) === Number(p.assignedNumber));
+      
+  //     // Kiểm tra xem số này đã trúng giải chưa
+  //     const isAlreadyWon = winners.includes(p.assignedNumber);
+
+  //     // Chỉ lấy người KHÔNG bị chặn VÀ KHÔNG trúng rồi
+  //     return !isBlocked && !isAlreadyWon;
+  //   });
+
+  //   if (potentialWinners.length === 0) {
+  //     alert("Hết người trúng giải hoặc danh sách trống!");
+  //     return;
+  //   }
+
+  //   const weightedPool: number[] = [];
+  //   potentialWinners.forEach(p => {
+  //     weightedPool.push(p.assignedNumber);
+  //     if (p.seniorityYears >= 3 && p.type === UserType.EMPLOYEE) {
+  //        weightedPool.push(p.assignedNumber);
+  //     }
+  //   });
+
+  //   const randomIndex = Math.floor(Math.random() * weightedPool.length);
+  //   const winningNumber = weightedPool[randomIndex];
+    
+  //   setCurrentWinner(winningNumber);
+  //   setIsSpinning(true);
+  // };
+
   const spinLogic = () => {
     if (isSpinning) return;
     
@@ -314,16 +403,24 @@ const App: React.FC = () => {
       return;
     }
 
-    const potentialWinners = participants.filter(p => 
-      !blacklistedNumbers.includes(p.assignedNumber) &&
-      !winners.includes(p.assignedNumber)
-    );
+    // --- FIX: Lọc danh sách người thắng tiềm năng ---
+    const potentialWinners = participants.filter(p => {
+      // Kiểm tra xem số này có nằm trong blacklist không (So sánh dạng Số)
+      const isBlocked = blacklistedNumbers.some(bn => Number(bn) === Number(p.assignedNumber));
+      
+      // Kiểm tra xem số này đã trúng giải chưa
+      const isAlreadyWon = winners.includes(p.assignedNumber);
+
+      // Chỉ lấy người KHÔNG bị chặn VÀ KHÔNG trúng rồi
+      return !isBlocked && !isAlreadyWon;
+    });
 
     if (potentialWinners.length === 0) {
-      alert("Hết người trúng giải hoặc danh sách trống!");
+      // alert("Không còn ai đủ điều kiện trúng giải (hoặc tất cả đã bị chặn)!");
       return;
     }
 
+    // Logic tính trọng số (Seniority) giữ nguyên
     const weightedPool: number[] = [];
     potentialWinners.forEach(p => {
       weightedPool.push(p.assignedNumber);
@@ -339,15 +436,32 @@ const App: React.FC = () => {
     setIsSpinning(true);
   };
 
+  // const handleSpinFinish = (visualWinner: number) => {
+  //   if (visualWinner) {
+  //     setCurrentWinner(visualWinner);
+  //     audioManager.playWin();
+  //     setShowPopup(true);
+  //     // NOTE: Fireworks triggered by useEffect
+  //   }
+  //   setIsSpinning(false);
+  // };
+
   const handleSpinFinish = (visualWinner: number) => {
-    if (visualWinner) {
-      setCurrentWinner(visualWinner);
-      audioManager.playWin();
-      setShowPopup(true);
-      // NOTE: Fireworks triggered by useEffect
-    }
-    setIsSpinning(false);
-  };
+  const isBlocked = blacklistedNumbers.some(
+    bn => Number(bn) === Number(visualWinner)
+  );
+
+  if (isBlocked) {
+    console.error('❌ Wheel landed on BLACKLIST number:', visualWinner);
+    return; // ❌ Không cho popup
+  }
+
+  setCurrentWinner(visualWinner);
+  audioManager.playWin();
+  setShowPopup(true);
+  setIsSpinning(false);
+};
+
 
   const handleClosePopup = () => {
     if (currentWinner !== null) {
@@ -376,15 +490,33 @@ const App: React.FC = () => {
     setCurrentWinner(null);
   };
 
-  const targetIndexForWheel = useMemo(() => {
-    if (currentWinner === null) return null;
+  // const targetIndexForWheel = useMemo(() => {
+  //   if (currentWinner === null) return null;
     
-    const indices = wheelSegments
-      .map((seg, idx) => seg.value === currentWinner ? idx : -1)
-      .filter(idx => idx !== -1);
+  //   const indices = wheelSegments
+  //     .map((seg, idx) => seg.value === currentWinner ? idx : -1)
+  //     .filter(idx => idx !== -1);
       
-    return indices.length > 0 ? indices[Math.floor(Math.random() * indices.length)] : 0;
-  }, [currentWinner, wheelSegments]);
+  //   return indices.length > 0 ? indices[Math.floor(Math.random() * indices.length)] : 0;
+  // }, [currentWinner, wheelSegments]);
+
+  const validTargetIndices = useMemo(() => {
+  if (currentWinner === null) return [];
+
+  return wheelSegments
+    .map((seg, idx) =>
+      seg.value === currentWinner && !seg.isBlacklisted ? idx : -1
+    )
+    .filter(idx => idx !== -1);
+}, [currentWinner, wheelSegments]);
+
+  const targetIndexForWheel = useMemo(() => {
+  if (validTargetIndices.length === 0) return null;
+  return validTargetIndices[
+    Math.floor(Math.random() * validTargetIndices.length)
+  ];
+}, [validTargetIndices]);
+
 
   // Admin Handlers
   const handleUpdateParticipant = (updated: Participant) => {
@@ -420,6 +552,10 @@ const App: React.FC = () => {
 
     // Xóa logo tùy chỉnh
     setCustomLogo(null);
+
+    // Xóa Undo/Redo trong Local Storage
+    localStorage.removeItem(STORAGE_KEY.UNDO);
+    localStorage.removeItem(STORAGE_KEY.REDO);
   };
 
   const handleAddPrize = (p: Omit<Prize, 'id'>) => {
@@ -431,6 +567,52 @@ const App: React.FC = () => {
   const handleDeletePrize = (id: string) => {
      setPrizes(prev => prev.filter(p => p.id !== id));
      if (selectedPrizeId === id) setSelectedPrizeId(null);
+  };
+
+  // 1. Logic Bật/Tắt xác suất trúng thưởng
+  const handleToggleBlacklist = (val: number | string) => {
+    // 1. Ép kiểu về Số ngay lập tức để đồng bộ dữ liệu
+    const num = Number(val); 
+    
+    setBlacklistedNumbers(prev => {
+      // 2. Kiểm tra tồn tại bằng cách ép kiểu từng phần tử trong danh sách cũ
+      const isExist = prev.some(item => Number(item) === num);
+
+      if (isExist) {
+        // Nếu ĐÃ CÓ trong danh sách đen -> Xóa đi (Tức là: Cho phép trúng thưởng trở lại)
+        // console.log(`Đã mở khóa số: ${num} -> Có thể trúng`);
+        return prev.filter(item => Number(item) !== num);
+      } else {
+        // Nếu CHƯA CÓ -> Thêm vào (Tức là: Chặn không cho trúng)
+        // console.log(`Đã chặn số: ${num} -> Không thể trúng`);
+        return [...prev, num];
+      }
+    });
+  };
+
+  // 2. Logic Reset Game (Giữ người chơi, Trả lại giải thưởng)
+  const handleResetGameOnly = () => {
+    // Xóa danh sách trúng và lịch sử
+    setWinners([]);
+    setWinHistory([]);
+    setCurrentWinner(null);
+
+    // Xóa Undo/Redo
+    setUndoStack([]);
+    setRedoStack([]);
+    localStorage.removeItem(STORAGE_KEY.UNDO);
+    localStorage.removeItem(STORAGE_KEY.REDO);
+
+    // QUAN TRỌNG: Khôi phục số lượng giải thưởng về ban đầu
+    setPrizes(prev => prev.map(p => ({
+      ...p,
+      quantity: p.initialQuantity 
+    })));
+
+    // Không làm gì với state 'participants' -> Giữ nguyên danh sách người chơi
+    
+    setIsAdminOpen(false); // Đóng bảng Admin sau khi reset
+    // alert("Đã làm mới lượt chơi và khôi phục giải thưởng!");
   };
 
   // --- RENDER ---
@@ -658,8 +840,8 @@ const App: React.FC = () => {
                       </button>
                       
                       <div className="flex space-x-8 text-xs font-semibold tracking-wider text-white/80 uppercase">
-                      <div>Tổng: <span className="text-white text-base font-bold shadow-black drop-shadow-sm">{participants.length}</span></div>
-                      <div>Khả dụng: <span className="text-mor-gold text-base font-bold shadow-black drop-shadow-sm">{wheelSegments.length}</span></div>
+                      <div>Tổng người chơi: <span className="text-white text-base font-bold shadow-black drop-shadow-sm">{participants.length}</span></div>
+                      <div>Tổng cơ hội: <span className="text-mor-gold text-base font-bold shadow-black drop-shadow-sm">{wheelSegments.length}</span></div>
                       </div>
                   </div>
                 </div>
@@ -919,7 +1101,7 @@ const App: React.FC = () => {
         onDeleteParticipant={handleDeleteParticipant}
         onClearAllParticipants={handleClearAllParticipants}
         blacklistedNumbers={blacklistedNumbers}
-        onUpdateBlacklist={setBlacklistedNumbers}
+        onToggleBlacklist={handleToggleBlacklist} 
         history={winners}
         
         // Prize Props
@@ -934,14 +1116,8 @@ const App: React.FC = () => {
         // Logo upload
         onUploadLogo={setCustomLogo}
 
-        onReset={() => {
-          setWinners([]);
-          setWinHistory([]); 
-          setCurrentWinner(null);
-          setUndoStack([]);
-          setRedoStack([]);
-          setIsAdminOpen(false);
-        }}
+        // Reset Game Only
+        onReset={handleResetGameOnly}
       />
     </div>
   );
