@@ -704,6 +704,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
       setEditingId(null);
     } else {
       onAddParticipant(participantData);
+      const isBlocked = blacklistedNumbers.some(n => Number(n) === parseInt(assignedNum));
+      if (isBlocked) {
+        onToggleBlacklist(parseInt(assignedNum));
+      }
     }
     
     // Reset form
@@ -1121,7 +1125,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({
                               value={prizeQty} 
                               onChange={e => setPrizeQty(e.target.value)} 
                               className="w-full md:w-32 bg-gray-900/50 text-white px-4 py-2 rounded-lg border border-gray-700 focus:border-mor-gold focus:outline-none"
-                              placeholder="SL"
+                              placeholder="Số lượng"
                               min="1"
                               required
                               />

@@ -24,6 +24,14 @@ const SlidePanel: React.FC<SlidePanelProps> = ({ onBack }) => {
 
     // 2. Xử lý Link Canva (Tự động chuyển Link View -> Link Embed)
     // Ví dụ: .../view -> .../view?embed
+    if (finalUrl.includes('canva.com')) {
+      // BƯỚC QUAN TRỌNG: Nếu là link /watch, đổi ngay thành /view
+      if (finalUrl.includes('/watch')) {
+        finalUrl = finalUrl.replace('/watch', '/view');
+      }
+    }
+
+
     if (finalUrl.includes('canva.com') && finalUrl.includes('/view')) {
       if (!finalUrl.includes('embed')) {
         // Kiểm tra xem URL đã có tham số chưa (?)
