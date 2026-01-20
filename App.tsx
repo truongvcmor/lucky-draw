@@ -9,6 +9,7 @@ import { Participant, Prize, UserType, WheelSegment, WinRecord } from './types';
 import { audioManager } from './utils/audio';
 import { drawFireworks } from './utils/fireworks';
 import SlidePanel from './components/SlidePanel';
+import RecapPanel from './components/RecapPanel';
 
 // Default Data Seed
 const SEED_PARTICIPANTS: Participant[] = Array.from({ length: 60 }, (_, i) => ({
@@ -1247,12 +1248,20 @@ const App: React.FC = () => {
 
       {/* Placeholders for other views */}
       {currentView === 'RECAP' && (
-        <div className="flex-grow flex items-center justify-center relative z-10">
-            <div className="text-center animate-fade-in-up">
-                <h2 className="text-4xl font-bold mb-4">Recap 2025</h2>
-                <p className="text-gray-300 mb-8">Nội dung đang được cập nhật...</p>
-                <button onClick={() => setCurrentView('HOME')} className="px-6 py-2 bg-white/10 rounded-full hover:bg-white/20 transition">Quay lại</button>
-            </div>
+        // <div className="flex-grow flex items-center justify-center relative z-10">
+        //     <div className="text-center animate-fade-in-up">
+        //         <h2 className="text-4xl font-bold mb-4">Recap 2025</h2>
+        //         <p className="text-gray-300 mb-8">Nội dung đang được cập nhật...</p>
+        //         <button onClick={() => setCurrentView('HOME')} className="px-6 py-2 bg-white/10 rounded-full hover:bg-white/20 transition">Quay lại</button>
+        //     </div>
+        // </div>
+        <div 
+          className="absolute inset-0 z-20 bg-[#05101c]"
+          style={{ 
+            display: currentView === 'RECAP' ? 'block' : 'none' 
+          }}
+        >
+          <RecapPanel onBack={() => setCurrentView('HOME')} />
         </div>
       )}
       
