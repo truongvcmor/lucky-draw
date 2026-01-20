@@ -25,6 +25,15 @@ const PrizePanel: React.FC<PrizePanelProps> = ({ prizes, selectedPrizeId, onSele
           const isSoldOut = prize.quantity === 0;
           const percentage = Math.round((prize.quantity / prize.initialQuantity) * 100) || 0;
 
+          // --- LOGIC SIZE CHỮ ĐỘNG ---
+          const getTitleSizeClass = (text: string) => {
+            const len = text.length;
+            if (len > 25) return 'text-[10px] leading-3'; 
+            if (len > 18) return 'text-xs leading-3';      
+            if (len > 10) return 'text-sm leading-4';      
+            return 'text-lg leading-tight';                
+          };
+
           return (
             <div 
               key={prize.id}
@@ -65,15 +74,20 @@ const PrizePanel: React.FC<PrizePanelProps> = ({ prizes, selectedPrizeId, onSele
                 <div className="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full blur-xl -translate-y-1/2 translate-x-1/2"></div>
 
                 <div className="relative z-10">
-                  <div className={`font-black uppercase tracking-wide leading-tight ${isSelected ? 'text-mor-gold text-lg drop-shadow-sm' : 'text-gray-200 text-sm group-hover:text-white'}`}>
+                  {/* --- TÊN GIẢI THƯỞNG (ĐÃ SỬA: Áp dụng size chữ động) --- */}
+                  <div className={`
+                    font-black uppercase tracking-wide transition-all duration-300
+                    ${getTitleSizeClass(prize.name)}
+                    ${isSelected ? 'text-mor-gold drop-shadow-sm' : 'text-gray-200 group-hover:text-white'}
+                  `}>
                     {prize.name}
                   </div>
 
-                {prize.info && (
-                  <div className={`text-xs font-semibold mt-1 truncate ${isSelected ? 'text-white/90' : 'text-gray-400'}`}>
-                    {prize.info}
-                  </div>
-                )}
+                  {prize.info && (
+                    <div className={`text-xs font-semibold mt-1 truncate ${isSelected ? 'text-white/90' : 'text-gray-400'}`}>
+                      {prize.info}
+                    </div>
+                  )}
                   
                   {/* Progress Line */}
                   <div className="w-full h-1.5 mt-3 bg-black/40 rounded-full overflow-hidden">

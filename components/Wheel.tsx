@@ -547,55 +547,60 @@ const Wheel: React.FC<WheelProps> = ({ segments, isSpinning, winnerSegmentIndex,
 
   return (
     <div className="relative flex justify-center items-center w-full h-full">
-      {/* Pointer - Pointing Left into the wheel */}
-      <div className="absolute right-[-2%] top-1/2 transform -translate-y-1/2 z-20 filter drop-shadow-lg w-[10%] max-w-[60px]">
-        <svg viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-           <path d="M0 20L60 0V40L0 20Z" fill="url(#paint0_linear)"/>
-           <path d="M5 20L55 5V35L5 20Z" fill="#F37021"/> 
-           <defs>
-             <linearGradient id="paint0_linear" x1="0" y1="0" x2="60" y2="0" gradientUnits="userSpaceOnUse">
-               <stop stopColor="#FFD700"/>
-               <stop offset="1" stopColor="#B45309"/>
-             </linearGradient>
-           </defs>
-        </svg>
-      </div>
-
-      {/* --- Digital Number Display Box --- */}
-      {/* Positioned absolutely near the pointer */}
-      <div className="absolute top-1/2 right-[-25%] z-30 transform -translate-y-1/2 animate-fade-in-left hidden md:block">
-        <div className="relative group scale-75 lg:scale-100">
-          {/* Glow effect */}
-          <div className="absolute -inset-1 bg-gradient-to-r from-mor-gold to-mor-orange rounded-lg blur opacity-50 group-hover:opacity-100 transition duration-200"></div>
-          
-          {/* Main Box */}
-          <div className="relative bg-black/80 backdrop-blur-md rounded-lg border-2 border-mor-gold p-1 w-28 shadow-2xl">
-            {/* Screen bevel */}
-            <div className="bg-[#05101c] rounded border border-white/10 p-2 flex flex-col items-center justify-center h-20 relative overflow-hidden">
-               {/* Scanlines effect */}
-               <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 bg-[length:100%_2px,3px_100%] pointer-events-none"></div>
-               
-               <div className="text-[10px] text-mor-gold/80 font-bold uppercase tracking-widest mb-1 z-20">Hiện tại</div>
-               
-               {/* THE NUMBER */}
-               <div 
-                 ref={currentNumberRef}
-                 className="text-4xl font-black text-white z-20 font-mono tracking-tighter drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]"
-               >
-                 --
-               </div>
-            </div>
-            
-            {/* Metallic bolts decoration */}
-            <div className="absolute top-1 left-1 w-1 h-1 bg-gray-400 rounded-full"></div>
-            <div className="absolute top-1 right-1 w-1 h-1 bg-gray-400 rounded-full"></div>
-            <div className="absolute bottom-1 left-1 w-1 h-1 bg-gray-400 rounded-full"></div>
-            <div className="absolute bottom-1 right-1 w-1 h-1 bg-gray-400 rounded-full"></div>
-          </div>
-          
-          {/* Connection line to pointer */}
-          <div className="absolute top-1/2 left-0 w-8 h-1 bg-mor-gold transform -translate-x-full -translate-y-1/2 shadow-[0_0_10px_rgba(255,215,0,0.5)]"></div>
+      <div className="absolute top-1/2 right-[-90px] md:right-[-110px] transform translate-x-[85%] md:translate-x-[0%] -translate-y-1/2 z-50 flex items-center">
+        
+        {/* 1. KIM CHỈ (POINTER) */}
+        {/* Bỏ các class position absolute cũ, giữ lại kích thước */}
+        <div className="relative z-20 w-12 h-16 md:w-16 md:h-20 filter drop-shadow-lg flex-shrink-0">
+          <svg viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+             <path d="M0 20L60 0V40L0 20Z" fill="url(#paint0_linear)"/>
+             <path d="M5 20L55 5V35L5 20Z" fill="#F37021"/> 
+             <defs>
+               <linearGradient id="paint0_linear" x1="0" y1="0" x2="60" y2="0" gradientUnits="userSpaceOnUse">
+                 <stop stopColor="#FFD700"/>
+                 <stop offset="1" stopColor="#B45309"/>
+               </linearGradient>
+             </defs>
+          </svg>
         </div>
+
+        {/* 2. ĐƯỜNG NỐI (CONNECTOR) - Tạo khoảng cách nhỏ ở giữa */}
+        {/* Thay thế cho việc dùng margin/padding để cố định khoảng cách cứng */}
+        <div className="w-6 h-1 bg-mor-gold shadow-[0_0_10px_rgba(255,215,0,0.5)] z-10 hidden md:block"></div>
+
+        {/* 3. HỘP SỐ (DIGITAL BOX) */}
+        {/* Bỏ position absolute cũ */}
+        <div className="relative z-10 hidden md:block">
+          <div className="relative group scale-75 lg:scale-100 origin-left">
+            {/* Glow effect */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-mor-gold to-mor-orange rounded-lg blur opacity-50 group-hover:opacity-100 transition duration-200"></div>
+            
+            {/* Main Box */}
+            <div className="relative bg-black/80 backdrop-blur-md rounded-lg border-2 border-mor-gold p-1 w-28 shadow-2xl">
+              <div className="bg-[#05101c] rounded border border-white/10 p-2 flex flex-col items-center justify-center h-20 relative overflow-hidden">
+                 {/* Scanlines effect */}
+                 <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 bg-[length:100%_2px,3px_100%] pointer-events-none"></div>
+                 
+                 <div className="text-[10px] text-mor-gold/80 font-bold uppercase tracking-widest mb-1 z-20">Hiện tại</div>
+                 
+                 {/* THE NUMBER */}
+                 <div 
+                   ref={currentNumberRef}
+                   className="text-4xl font-black text-white z-20 font-mono tracking-tighter drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]"
+                 >
+                   --
+                 </div>
+              </div>
+              
+              {/* Bolts decorations */}
+              <div className="absolute top-1 left-1 w-1 h-1 bg-gray-400 rounded-full"></div>
+              <div className="absolute top-1 right-1 w-1 h-1 bg-gray-400 rounded-full"></div>
+              <div className="absolute bottom-1 left-1 w-1 h-1 bg-gray-400 rounded-full"></div>
+              <div className="absolute bottom-1 right-1 w-1 h-1 bg-gray-400 rounded-full"></div>
+            </div>
+          </div>
+        </div>
+
       </div>
       
       <canvas 
