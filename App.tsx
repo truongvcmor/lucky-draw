@@ -147,6 +147,7 @@ const App: React.FC = () => {
   const [showRules, setShowRules] = useState(false); // Rules Popup State
   const [isMuted, setIsMuted] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [revealPhase, setRevealPhase] = useState<'OPENING' | 'REVEALED'>('REVEALED');
 
   // Logo Error State
   const [logoError, setLogoError] = useState(false);
@@ -330,12 +331,12 @@ const App: React.FC = () => {
 
   // Fireworks Effect Trigger
   useEffect(() => {
-    if (showPopup && confettiCanvasRef.current) {
+    if (showPopup && revealPhase === 'REVEALED' && confettiCanvasRef.current) {
         // Start fireworks when popup is shown and canvas is mounted
         const cleanup = drawFireworks(confettiCanvasRef.current);
         return cleanup;
     }
-  }, [showPopup]);
+  }, [showPopup, revealPhase]);
 
 
   // const spinLogic = () => {
@@ -447,7 +448,7 @@ const App: React.FC = () => {
   //   setIsSpinning(false);
   // };
 
-  const [revealPhase, setRevealPhase] = useState<'OPENING' | 'REVEALED'>('REVEALED');
+  // const [revealPhase, setRevealPhase] = useState<'OPENING' | 'REVEALED'>('REVEALED');
 
 //   const handleSpinFinish = (visualWinner: number) => {
 //   const isBlocked = blacklistedNumbers.some(
