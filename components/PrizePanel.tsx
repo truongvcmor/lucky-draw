@@ -34,6 +34,16 @@ const PrizePanel: React.FC<PrizePanelProps> = ({ prizes, selectedPrizeId, onSele
             return 'text-lg leading-tight';                
           };
 
+          // --- LOGIC SIZE CHỮ ĐỘNG CHO CHI TIẾT (MỚI THÊM) ---
+          // Thay đổi size chữ dựa vào độ dài của text mô tả
+          const getInfoSizeClass = (text: string) => {
+            const len = text.length;
+            if (len > 40) return 'text-[8px]';  // Rất dài -> Chữ cực nhỏ
+            if (len > 30) return 'text-[9px]';  // Dài -> Chữ nhỏ
+            if (len > 20) return 'text-[10px]'; // Hơi dài -> Chữ vừa
+            return 'text-xs';                   // Mặc định
+          };
+
           return (
             <div 
               key={prize.id}
@@ -74,7 +84,7 @@ const PrizePanel: React.FC<PrizePanelProps> = ({ prizes, selectedPrizeId, onSele
                 <div className="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full blur-xl -translate-y-1/2 translate-x-1/2"></div>
 
                 <div className="relative z-10">
-                  {/* --- TÊN GIẢI THƯỞNG (ĐÃ SỬA: Áp dụng size chữ động) --- */}
+                  {/* --- TÊN GIẢI THƯỞNG --- */}
                   <div className={`
                     font-black uppercase tracking-wide transition-all duration-300
                     ${getTitleSizeClass(prize.name)}
@@ -83,8 +93,14 @@ const PrizePanel: React.FC<PrizePanelProps> = ({ prizes, selectedPrizeId, onSele
                     {prize.name}
                   </div>
 
+                  {/* --- CHI TIẾT GIẢI THƯỞNG (ĐÃ CẬP NHẬT) --- */}
+                  {/* Thay thế class tĩnh 'text-xs' bằng hàm getInfoSizeClass */}
                   {prize.info && (
-                    <div className={`text-xs font-semibold mt-1 truncate ${isSelected ? 'text-white/90' : 'text-gray-400'}`}>
+                    <div className={`
+                      font-semibold mt-1 truncate
+                      ${getInfoSizeClass(prize.info)}
+                      ${isSelected ? 'text-white/90' : 'text-gray-400'}
+                    `}>
                       {prize.info}
                     </div>
                   )}
